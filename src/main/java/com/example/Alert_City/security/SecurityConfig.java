@@ -7,6 +7,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer; // IMPORTANTE
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -15,6 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration; // IMPORTANTE
+import org.springframework.web.cors.CorsConfigurationSource; // IMPORTANTE
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource; // IMPORTANTE
+import java.util.Arrays; // IMPORTANTE
+import java.util.List; // IMPORTANTE
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +33,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(crsf -> crsf.disable())
+        http
+            .cors(Customizer.withDefaults()) // <--- ADICIONADO: Ativa o suporte a CORS usando o Bean abaixo
+            .csrf(crsf -> crsf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/**").permitAll()
@@ -41,6 +49,27 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
+
+    // --- NOVO BEAN DE CONFIGURAÇÃO DE CORS (GLOBAL) ---
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        
+        // 1. Quem pode acessar? "*" significa TODOS (Front local, Vercel, Celular, etc)
+        configuration.setAllowedOrigins(List.of("*"));
+        
+        // 2. Quais métodos? (GET, POST, PUT, DELETE, OPTIONS, etc)
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT"));
+        
+        // 3. Quais cabeçalhos? (Authorization, Content-Type, etc)
+        configuration.setAllowedHeaders(List.of("*"));
+        
+        // Registra essa configuração para TODAS as rotas (/**)
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+    // --------------------------------------------------
 
     @Bean
     public PasswordEncoder passwordEncoder() {
