@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.Alert_City.dto.AttachmentUploadResponseDTO;
+import com.example.Alert_City.exceptions.ResourceNotFoundException;
 import com.example.Alert_City.model.AttachmentModel;
 import com.example.Alert_City.model.OccurrenceModel;
 import com.example.Alert_City.service.AttachmentService;
@@ -53,10 +53,8 @@ public class AttachmentController {
             String fileType = file.getContentType();
             AttachmentModel attachment = null;
             if (occurrenceId != null) {
-                Optional<OccurrenceModel> occurrenceOpt = occurrenceService.findById(occurrenceId);
-                if (occurrenceOpt.isPresent()) {
-                    attachment = attachmentService.saveAttachment(fileUrl, fileType, occurrenceOpt.get());
-                }
+                OccurrenceModel occurrence = occurrenceService.findById(occurrenceId).orElseThrow(() -> new ResourceNotFoundException("Occurrence not found with id: " + occurrenceId));
+                attachment = attachmentService.saveAttachment(fileUrl, fileType, occurrence);
             }
             AttachmentUploadResponseDTO response = new AttachmentUploadResponseDTO();
             response.setUrl(fileUrl);

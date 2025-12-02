@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Alert_City.dto.UserDTO;
 import com.example.Alert_City.enums.ProfileType;
+import com.example.Alert_City.exceptions.ResourceNotFoundException;
 import com.example.Alert_City.mapper.UserMapper;
 import com.example.Alert_City.model.UserModel;
 import com.example.Alert_City.service.UserService;
@@ -51,12 +52,9 @@ public class UserController {
         if (!isAuthorized(id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
-        Optional<UserModel> userOpt = userService.findById(id);
-        if (userOpt.isPresent()) {
-            UserDTO userDTO = UserMapper.toDTO(userOpt.get());
-            return ResponseEntity.ok(userDTO);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        UserModel user = userService.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        UserDTO userDTO = UserMapper.toDTO(user);
+        return ResponseEntity.ok(userDTO);
     }
 
     @PutMapping("/{id}")
@@ -64,19 +62,15 @@ public class UserController {
         if (!isAuthorized(id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
-        Optional<UserModel> userOpt = userService.findById(id);
-        if (userOpt.isPresent()) {
-            UserModel user = userOpt.get();
-            if (request.containsKey("name")) {
-                user.setName(request.get("name"));
-            }
-            if (request.containsKey("password")) {
-                user.setPassword(passwordEncoder.encode(request.get("password")));
-            }
-            userService.updateUser(user);
-            UserDTO userDTO = UserMapper.toDTO(user);
-            return ResponseEntity.ok(userDTO);
+        UserModel user = userService.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+        if (request.containsKey("name")) {
+            user.setName(request.get("name"));
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        if (request.containsKey("password")) {
+            user.setPassword(passwordEncoder.encode(request.get("password")));
+        }
+        userService.updateUser(user);
+        UserDTO userDTO = UserMapper.toDTO(user);
+        return ResponseEntity.ok(userDTO);
     }
 }

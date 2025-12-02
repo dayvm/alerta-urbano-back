@@ -2,7 +2,6 @@ package com.example.Alert_City.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Alert_City.dto.CommentDTO;
+import com.example.Alert_City.exceptions.ResourceNotFoundException;
 import com.example.Alert_City.mapper.CommentMapper;
 import com.example.Alert_City.model.CommentModel;
 import com.example.Alert_City.model.OccurrenceModel;
@@ -49,15 +49,9 @@ public class CommentController {
         String text = (String) request.get("text");
         Long occurrenceId = Long.valueOf(request.get("occurrenceId").toString());
         Long userId = Long.valueOf(request.get("userId").toString());
-        Optional<UserModel> userOpt = userService.findById(userId);
-        Optional<OccurrenceModel> occurrenceOpt = occurrenceService.findById(occurrenceId);
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
-        }
-        if (occurrenceOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid occurrence ID");
-        }
-        CommentModel comment = commentService.createComment(text, userOpt.get(), occurrenceOpt.get());
+        UserModel user = userService.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        OccurrenceModel occurrence = occurrenceService.findById(occurrenceId).orElseThrow(() -> new ResourceNotFoundException("Occurrence not found with id: " + occurrenceId));
+        CommentModel comment = commentService.createComment(text, user, occurrence);
         CommentDTO commentDTO = CommentMapper.toDTO(comment);
         return ResponseEntity.status(HttpStatus.CREATED).body(commentDTO);
     }

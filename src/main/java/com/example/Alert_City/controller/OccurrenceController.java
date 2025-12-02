@@ -2,7 +2,6 @@ package com.example.Alert_City.controller;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.Alert_City.dto.OccurrenceDTO;
 import com.example.Alert_City.enums.OccurrenceStatus;
+import com.example.Alert_City.exceptions.ResourceNotFoundException;
 import com.example.Alert_City.mapper.OccurrenceMapper;
 import com.example.Alert_City.model.CategoryModel;
 import com.example.Alert_City.model.OccurrenceModel;
@@ -56,12 +56,9 @@ public class OccurrenceController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOccurrenceById(@PathVariable Long id) {
-        Optional<OccurrenceModel> occOpt = occurrenceService.findById(id);
-        if (occOpt.isPresent()) {
-            OccurrenceDTO dto = OccurrenceMapper.toDTO(occOpt.get());
-            return ResponseEntity.ok(dto);
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Occurrence not found");
+        OccurrenceModel occurrence = occurrenceService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Occurrence not found with id: " + id));
+        OccurrenceDTO dto = OccurrenceMapper.toDTO(occurrence);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping
@@ -73,28 +70,19 @@ public class OccurrenceController {
         String addressText = (String) request.get("addressText");
         Long authorId = Long.valueOf(request.get("authorId").toString());
         Long categoryId = Long.valueOf(request.get("categoryId").toString());
-        Optional<UserModel> userOpt = userService.findById(authorId);
-        Optional<CategoryModel> categoryOpt = categoryService.findById(categoryId);
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid author ID");
-        }
-        if (categoryOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid category ID");
-        }
-        OccurrenceModel occurrence = occurrenceService.createOccurrence(title, description, latitude, longitude, addressText, userOpt.get(), categoryOpt.get());
+        UserModel user = userService.findById(authorId).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + authorId));
+        CategoryModel category = categoryService.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
+        OccurrenceModel occurrence = occurrenceService.createOccurrence(title, description, latitude, longitude, addressText, user, category);
         OccurrenceDTO dto = OccurrenceMapper.toDTO(occurrence);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
-        Optional<OccurrenceModel> occOpt = occurrenceService.findById(id);
-        if (occOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Occurrence not found");
-        }
+        OccurrenceModel occurrence = occurrenceService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Occurrence not found with id: " + id));
         String statusStr = request.get("currentStatus");
         OccurrenceStatus newStatus = OccurrenceStatus.valueOf(statusStr.toUpperCase());
-        OccurrenceModel updated = occurrenceService.updateStatus(occOpt.get(), newStatus);
+        OccurrenceModel updated = occurrenceService.updateStatus(occurrence, newStatus);
         OccurrenceDTO dto = OccurrenceMapper.toDTO(updated);
         return ResponseEntity.ok(dto);
     }

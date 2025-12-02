@@ -13,15 +13,15 @@ public class JwtUtil {
     private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     private static final long EXPIRATION_TIME = 86400000;
 
-    public static String generateToken(String name) {
+    public static String generateToken(String email) {
         return Jwts.builder()
-                   .setSubject(name)
+                   .setSubject(email)
                    .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                    .signWith(KEY, SignatureAlgorithm.HS256)
                    .compact();
     }
 
-    public static String extractName(String token) {
+    public static String extractEmail(String token) {
         return Jwts.parserBuilder().setSigningKey(KEY).build()
                    .parseClaimsJws(token).getBody().getSubject();
     }
