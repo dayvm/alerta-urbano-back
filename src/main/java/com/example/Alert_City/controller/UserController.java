@@ -37,18 +37,13 @@ public class UserController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
-
         String email = authentication.getName();
         Optional<UserModel> authenticatedUserOpt = userService.findByEmail(email);
-
         if (authenticatedUserOpt.isEmpty()) {
             return false;
         }
-
         UserModel authenticatedUser = authenticatedUserOpt.get();
-
-        return authenticatedUser.getId().equals(requestedUserId) ||
-               authenticatedUser.getProfileType() == ProfileType.ADMIN;
+        return authenticatedUser.getId().equals(requestedUserId) || authenticatedUser.getProfileType() == ProfileType.ADMIN;
     }
 
     @GetMapping("/{id}")
@@ -56,14 +51,11 @@ public class UserController {
         if (!isAuthorized(id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
-
         Optional<UserModel> userOpt = userService.findById(id);
-
         if (userOpt.isPresent()) {
             UserDTO userDTO = UserMapper.toDTO(userOpt.get());
             return ResponseEntity.ok(userDTO);
         }
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
 
@@ -72,26 +64,19 @@ public class UserController {
         if (!isAuthorized(id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Access denied");
         }
-
         Optional<UserModel> userOpt = userService.findById(id);
-
         if (userOpt.isPresent()) {
             UserModel user = userOpt.get();
-
             if (request.containsKey("name")) {
                 user.setName(request.get("name"));
             }
-
             if (request.containsKey("password")) {
                 user.setPassword(passwordEncoder.encode(request.get("password")));
             }
-
             userService.updateUser(user);
-
             UserDTO userDTO = UserMapper.toDTO(user);
             return ResponseEntity.ok(userDTO);
         }
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
 }

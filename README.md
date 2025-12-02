@@ -8,7 +8,7 @@ Java 17 • Spring Boot 3.5.7 • PostgreSQL • JWT • Swagger
 
 ## Quick Start
 
-```bash
+```
 # Configure database in application.properties
 spring.datasource.url=jdbc:postgresql://localhost:5432/<your-database>
 spring.datasource.username=<your-username>
@@ -18,7 +18,7 @@ spring.datasource.password=<your-password>
 mvn spring-boot:run
 
 # API Documentation
-http://localhost:8081/swagger-ui/index.html
+http://localhost:8080/swagger-ui/index.html
 ```
 
 ## Features

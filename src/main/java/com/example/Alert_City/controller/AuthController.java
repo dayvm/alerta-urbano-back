@@ -36,12 +36,11 @@ public class AuthController {
         String email = request.get("email");
         String password = request.get("password");
         String profileTypeStr = request.getOrDefault("profileType", "CITIZEN");
-
+        String institutionIdStr = request.get("institutionId");
         ProfileType profileType = ProfileType.valueOf(profileTypeStr.toUpperCase());
-
-        UserModel user = userService.registerUser(name, email, password, profileType);
+        Long institutionId = institutionIdStr != null && !institutionIdStr.isEmpty() ? Long.parseLong(institutionIdStr) : null;
+        UserModel user = userService.registerUser(name, email, password, profileType, institutionId);
         UserDTO userDTO = UserMapper.toDTO(user);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
     }
 
@@ -49,21 +48,16 @@ public class AuthController {
     public ResponseEntity<?> loginUser(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         String password = request.get("password");
-
         Optional<UserModel> userOpt = userService.findByEmail(email);
-
         if (userOpt.isPresent()) {
             UserModel user = userOpt.get();
             if (passwordEncoder.matches(password, user.getPassword())) {
                 String token = JwtUtil.generateToken(user.getEmail());
-
                 UserDTO userDTO = UserMapper.toDTO(user);
                 LoginResponseDTO response = new LoginResponseDTO(token, userDTO);
-
                 return ResponseEntity.ok(response);
             }
         }
-
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
     }
 }

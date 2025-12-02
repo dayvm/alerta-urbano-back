@@ -31,8 +31,7 @@ public class OccurrenceService {
         return occurrenceRepository.findById(id);
     }
 
-    public OccurrenceModel createOccurrence(String title, String description, Double latitude, Double longitude,
-                                            String addressText, UserModel author, CategoryModel category) {
+    public OccurrenceModel createOccurrence(String title, String description, Double latitude, Double longitude, String addressText, UserModel author, CategoryModel category) {
         OccurrenceModel occurrence = new OccurrenceModel();
         occurrence.setTitle(title);
         occurrence.setDescription(description);
@@ -43,7 +42,6 @@ public class OccurrenceService {
         occurrence.setCreatedAt(LocalDateTime.now());
         occurrence.setAuthor(author);
         occurrence.setCategory(category);
-
         return occurrenceRepository.save(occurrence);
     }
 

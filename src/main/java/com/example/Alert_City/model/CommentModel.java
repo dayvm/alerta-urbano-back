@@ -22,17 +22,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "Comment")
 public class CommentModel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(columnDefinition = "TEXT", nullable = false)
     private String text;
-
     @Column(name = "posted_at", nullable = false)
     private LocalDateTime postedAt;
-
+    
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserModel user;

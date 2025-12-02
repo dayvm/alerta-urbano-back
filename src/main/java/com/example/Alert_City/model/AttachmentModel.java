@@ -20,17 +20,14 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "Attachment")
 public class AttachmentModel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
-
     @Column(name = "file_type")
     private String fileType;
-
+    
     @ManyToOne
     @JoinColumn(name = "occurrence_id", nullable = false)
     private OccurrenceModel occurrence;

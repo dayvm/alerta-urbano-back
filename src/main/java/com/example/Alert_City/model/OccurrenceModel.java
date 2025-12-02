@@ -26,33 +26,25 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "Occurrence")
 public class OccurrenceModel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String title;
-
     @Column(columnDefinition = "TEXT")
     private String description;
-
     @Column(nullable = false)
     private Double latitude;
-
     @Column(nullable = false)
     private Double longitude;
-
     @Column(name = "address_text")
     private String addressText;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "current_status", nullable = false)
     private OccurrenceStatus currentStatus;
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
+    
     @ManyToOne
     @JoinColumn(name = "author_id", nullable = false)
     private UserModel author;

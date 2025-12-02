@@ -9,7 +9,6 @@ public class OccurrenceMapper {
         if (occurrence == null) {
             return null;
         }
-
         OccurrenceDTO dto = new OccurrenceDTO();
         dto.setId(occurrence.getId());
         dto.setTitle(occurrence.getTitle());
@@ -19,22 +18,18 @@ public class OccurrenceMapper {
         dto.setAddressText(occurrence.getAddressText());
         dto.setCurrentStatus(occurrence.getCurrentStatus());
         dto.setCreatedAt(occurrence.getCreatedAt());
-
         if (occurrence.getAuthor() != null) {
             dto.setAuthorId(occurrence.getAuthor().getId());
             dto.setAuthorName(occurrence.getAuthor().getName());
         }
-
         if (occurrence.getCategory() != null) {
             dto.setCategoryId(occurrence.getCategory().getId());
             dto.setCategoryName(occurrence.getCategory().getName());
         }
-
         if (occurrence.getResponsibleInstitution() != null) {
             dto.setResponsibleInstitutionId(occurrence.getResponsibleInstitution().getId());
             dto.setResponsibleInstitutionName(occurrence.getResponsibleInstitution().getName());
         }
-
         return dto;
     }
 }

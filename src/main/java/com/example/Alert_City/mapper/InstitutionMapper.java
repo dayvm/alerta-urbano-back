@@ -9,14 +9,12 @@ public class InstitutionMapper {
         if (institution == null) {
             return null;
         }
-
         InstitutionDTO dto = new InstitutionDTO();
         dto.setId(institution.getId());
         dto.setName(institution.getName());
         dto.setDescription(institution.getDescription());
         dto.setLogoUrl(institution.getLogoUrl());
         dto.setOfficialContact(institution.getOfficialContact());
-
         return dto;
     }
 }

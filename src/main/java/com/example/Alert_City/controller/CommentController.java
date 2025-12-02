@@ -40,11 +40,7 @@ public class CommentController {
     @GetMapping
     public ResponseEntity<?> getCommentsByOccurrence(@RequestParam Long occurrenceId) {
         List<CommentModel> comments = commentService.findByOccurrenceId(occurrenceId);
-
-        List<CommentDTO> response = comments.stream()
-                .map(CommentMapper::toDTO)
-                .collect(Collectors.toList());
-
+        List<CommentDTO> response = comments.stream().map(CommentMapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 
@@ -53,21 +49,16 @@ public class CommentController {
         String text = (String) request.get("text");
         Long occurrenceId = Long.valueOf(request.get("occurrenceId").toString());
         Long userId = Long.valueOf(request.get("userId").toString());
-
         Optional<UserModel> userOpt = userService.findById(userId);
         Optional<OccurrenceModel> occurrenceOpt = occurrenceService.findById(occurrenceId);
-
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid user ID");
         }
-
         if (occurrenceOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid occurrence ID");
         }
-
         CommentModel comment = commentService.createComment(text, userOpt.get(), occurrenceOpt.get());
         CommentDTO commentDTO = CommentMapper.toDTO(comment);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(commentDTO);
     }
 }

@@ -22,17 +22,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "Category")
 public class CategoryModel {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(nullable = false)
     private String name;
-
     @Column(name = "sla_hours", nullable = false)
     private Integer slaHours;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "default_priority")
     private Priority defaultPriority;

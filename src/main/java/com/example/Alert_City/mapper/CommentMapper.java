@@ -9,22 +9,18 @@ public class CommentMapper {
         if (comment == null) {
             return null;
         }
-
         CommentDTO dto = new CommentDTO();
         dto.setId(comment.getId());
         dto.setText(comment.getText());
         dto.setPostedAt(comment.getPostedAt());
-
         if (comment.getUser() != null) {
             dto.setUserId(comment.getUser().getId());
             dto.setUserName(comment.getUser().getName());
             dto.setUserProfileType(comment.getUser().getProfileType());
         }
-
         if (comment.getOccurrence() != null) {
             dto.setOccurrenceId(comment.getOccurrence().getId());
         }
-
         return dto;
     }
 }

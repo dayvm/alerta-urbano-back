@@ -18,7 +18,6 @@ public class AttachmentService {
         attachment.setFileUrl(fileUrl);
         attachment.setFileType(fileType);
         attachment.setOccurrence(occurrence);
-
         return attachmentRepository.save(attachment);
     }
 }

@@ -7,7 +7,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.Alert_City.enums.ProfileType;
+import com.example.Alert_City.model.InstitutionModel;
 import com.example.Alert_City.model.UserModel;
+import com.example.Alert_City.repository.InstitutionRepository;
 import com.example.Alert_City.repository.UserRepository;
 
 @Service
@@ -17,14 +19,21 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private InstitutionRepository institutionRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public UserModel registerUser(String name, String email, String password, ProfileType profileType) {
+    public UserModel registerUser(String name, String email, String password, ProfileType profileType, Long institutionId) {
         UserModel user = new UserModel();
         user.setName(name);
         user.setEmail(email);
         user.setPassword(passwordEncoder.encode(password));
         user.setProfileType(profileType);
+        if (institutionId != null) {
+            Optional<InstitutionModel> institutionOpt = institutionRepository.findById(institutionId);
+            institutionOpt.ifPresent(user::setInstitution);
+        }
         return userRepository.save(user);
     }
 

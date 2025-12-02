@@ -35,30 +35,22 @@ public class AttachmentController {
     private static final String UPLOAD_DIR = "uploads/";
 
     @PostMapping("/upload")
-    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file,
-                                        @RequestParam(required = false) Long occurrenceId) {
+    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam(required = false) Long occurrenceId) {
         if (file.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File is empty");
         }
-
         try {
             Path uploadPath = Paths.get(UPLOAD_DIR);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
-
             String originalFilename = file.getOriginalFilename();
-            String fileExtension = originalFilename != null && originalFilename.contains(".")
-                    ? originalFilename.substring(originalFilename.lastIndexOf("."))
-                    : "";
+            String fileExtension = originalFilename != null && originalFilename.contains(".") ? originalFilename.substring(originalFilename.lastIndexOf(".")) : "";
             String uniqueFilename = UUID.randomUUID().toString() + fileExtension;
-
             Path filePath = uploadPath.resolve(uniqueFilename);
             Files.copy(file.getInputStream(), filePath);
-
             String fileUrl = "/" + UPLOAD_DIR + uniqueFilename;
             String fileType = file.getContentType();
-
             AttachmentModel attachment = null;
             if (occurrenceId != null) {
                 Optional<OccurrenceModel> occurrenceOpt = occurrenceService.findById(occurrenceId);
@@ -66,18 +58,14 @@ public class AttachmentController {
                     attachment = attachmentService.saveAttachment(fileUrl, fileType, occurrenceOpt.get());
                 }
             }
-
             AttachmentUploadResponseDTO response = new AttachmentUploadResponseDTO();
             response.setUrl(fileUrl);
             if (attachment != null) {
                 response.setId(attachment.getId());
             }
-
             return ResponseEntity.ok(response);
-
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to upload file: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload file: " + e.getMessage());
         }
     }
 }

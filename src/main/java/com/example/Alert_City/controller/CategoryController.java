@@ -24,11 +24,7 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<?> getAllCategories() {
         List<CategoryModel> categories = categoryService.findAll();
-
-        List<CategoryDTO> response = categories.stream()
-                .map(CategoryMapper::toDTO)
-                .collect(Collectors.toList());
-
+        List<CategoryDTO> response = categories.stream().map(CategoryMapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 }

@@ -9,13 +9,11 @@ public class CategoryMapper {
         if (category == null) {
             return null;
         }
-
         CategoryDTO dto = new CategoryDTO();
         dto.setId(category.getId());
         dto.setName(category.getName());
         dto.setSlaHours(category.getSlaHours());
         dto.setDefaultPriority(category.getDefaultPriority());
-
         return dto;
     }
 }

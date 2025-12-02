@@ -24,11 +24,7 @@ public class InstitutionController {
     @GetMapping
     public ResponseEntity<?> getAllInstitutions() {
         List<InstitutionModel> institutions = institutionService.findAll();
-
-        List<InstitutionDTO> response = institutions.stream()
-                .map(InstitutionMapper::toDTO)
-                .collect(Collectors.toList());
-
+        List<InstitutionDTO> response = institutions.stream().map(InstitutionMapper::toDTO).collect(Collectors.toList());
         return ResponseEntity.ok(response);
     }
 }

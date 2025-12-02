@@ -43,29 +43,24 @@ public class OccurrenceController {
     @GetMapping
     public ResponseEntity<?> getAllOccurrences(@RequestParam(required = false) Long userId) {
         List<OccurrenceModel> occurrences;
-
         if (userId != null) {
             occurrences = occurrenceService.findByAuthorId(userId);
         } else {
             occurrences = occurrenceService.findAll();
         }
-
         List<OccurrenceDTO> response = occurrences.stream()
                 .map(OccurrenceMapper::toDTO)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOccurrenceById(@PathVariable Long id) {
         Optional<OccurrenceModel> occOpt = occurrenceService.findById(id);
-
         if (occOpt.isPresent()) {
             OccurrenceDTO dto = OccurrenceMapper.toDTO(occOpt.get());
             return ResponseEntity.ok(dto);
         }
-
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Occurrence not found");
     }
 
@@ -78,23 +73,15 @@ public class OccurrenceController {
         String addressText = (String) request.get("addressText");
         Long authorId = Long.valueOf(request.get("authorId").toString());
         Long categoryId = Long.valueOf(request.get("categoryId").toString());
-
         Optional<UserModel> userOpt = userService.findById(authorId);
         Optional<CategoryModel> categoryOpt = categoryService.findById(categoryId);
-
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid author ID");
         }
-
         if (categoryOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid category ID");
         }
-
-        OccurrenceModel occurrence = occurrenceService.createOccurrence(
-            title, description, latitude, longitude, addressText,
-            userOpt.get(), categoryOpt.get()
-        );
-
+        OccurrenceModel occurrence = occurrenceService.createOccurrence(title, description, latitude, longitude, addressText, userOpt.get(), categoryOpt.get());
         OccurrenceDTO dto = OccurrenceMapper.toDTO(occurrence);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
@@ -102,16 +89,12 @@ public class OccurrenceController {
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
         Optional<OccurrenceModel> occOpt = occurrenceService.findById(id);
-
         if (occOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Occurrence not found");
         }
-
         String statusStr = request.get("currentStatus");
         OccurrenceStatus newStatus = OccurrenceStatus.valueOf(statusStr.toUpperCase());
-
         OccurrenceModel updated = occurrenceService.updateStatus(occOpt.get(), newStatus);
-
         OccurrenceDTO dto = OccurrenceMapper.toDTO(updated);
         return ResponseEntity.ok(dto);
     }

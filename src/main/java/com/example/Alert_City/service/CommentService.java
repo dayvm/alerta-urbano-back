@@ -27,7 +27,6 @@ public class CommentService {
         comment.setPostedAt(LocalDateTime.now());
         comment.setUser(user);
         comment.setOccurrence(occurrence);
-
         return commentRepository.save(comment);
     }
 }
