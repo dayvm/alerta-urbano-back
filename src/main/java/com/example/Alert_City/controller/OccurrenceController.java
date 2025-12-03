@@ -41,18 +41,26 @@ public class OccurrenceController {
     private CategoryService categoryService;
 
     @GetMapping
-    public ResponseEntity<?> getAllOccurrences(@RequestParam(required = false) Long userId) {
+    public ResponseEntity<?> getAllOccurrences(
+        @RequestParam(required = false) Long userId,
+        @RequestParam(required = false) Long institutionId
+    ) {
         List<OccurrenceModel> occurrences;
+
         if (userId != null) {
             occurrences = occurrenceService.findByAuthorId(userId);
-        } else {
-            occurrences = occurrenceService.findAll();
-        }
-        List<OccurrenceDTO> response = occurrences.stream()
-                .map(OccurrenceMapper::toDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+    } else if (institutionId != null) {
+        occurrences = occurrenceService.findByInstitutionId(institutionId);
+    } else {
+        occurrences = occurrenceService.findAll();
     }
+
+    List<OccurrenceDTO> response = occurrences.stream()
+            .map(OccurrenceMapper::toDTO)
+            .collect(Collectors.toList());
+
+    return ResponseEntity.ok(response);
+}
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getOccurrenceById(@PathVariable Long id) {
