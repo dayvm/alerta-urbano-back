@@ -59,7 +59,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(List.of("*"));
         
         // 2. Quais métodos? (GET, POST, PUT, DELETE, OPTIONS, etc)
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "TRACE", "CONNECT", "PATCH"));
         
         // 3. Quais cabeçalhos? (Authorization, Content-Type, etc)
         configuration.setAllowedHeaders(List.of("*"));
