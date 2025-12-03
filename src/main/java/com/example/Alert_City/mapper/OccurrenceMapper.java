@@ -18,6 +18,7 @@ public class OccurrenceMapper {
         dto.setAddressText(occurrence.getAddressText());
         dto.setCurrentStatus(occurrence.getCurrentStatus());
         dto.setCreatedAt(occurrence.getCreatedAt());
+        dto.setPhotoUrl(occurrence.getPhotoUrl());
         if (occurrence.getAuthor() != null) {
             dto.setAuthorId(occurrence.getAuthor().getId());
             dto.setAuthorName(occurrence.getAuthor().getName());

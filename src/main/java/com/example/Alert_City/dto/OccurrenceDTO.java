@@ -28,4 +28,5 @@ public class OccurrenceDTO {
     private String categoryName;
     private Long responsibleInstitutionId;
     private String responsibleInstitutionName;
+    private String photoUrl;
 }

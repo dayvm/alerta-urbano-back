@@ -56,4 +56,7 @@ public class OccurrenceModel {
     @ManyToOne
     @JoinColumn(name = "responsible_institution_id")
     private InstitutionModel responsibleInstitution;
+
+    @Column(name = "photo_url")
+    private String photoUrl;
 }
