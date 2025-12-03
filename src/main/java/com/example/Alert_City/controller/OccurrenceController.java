@@ -26,6 +26,7 @@ import com.example.Alert_City.model.UserModel;
 import com.example.Alert_City.service.CategoryService;
 import com.example.Alert_City.service.OccurrenceService;
 import com.example.Alert_City.service.UserService;
+import com.example.Alert_City.service.InstitutionService;
 
 @RestController
 @RequestMapping("/occurrences")
@@ -39,6 +40,9 @@ public class OccurrenceController {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private InstitutionService institutionService;
 
     @GetMapping
     public ResponseEntity<?> getAllOccurrences(
@@ -78,9 +82,16 @@ public class OccurrenceController {
         String addressText = (String) request.get("addressText");
         Long authorId = Long.valueOf(request.get("authorId").toString());
         Long categoryId = Long.valueOf(request.get("categoryId").toString());
+        InstitutionModel responsibleInstitution = null;
+        if (request.get("responsibleInstitutionId") != null) {
+            Long institutionId = Long.valueOf(request.get("responsibleInstitutionId").toString());
+            // Busca a instituição, se não achar, lança erro (ou deixa null se preferir ser leniente)
+            responsibleInstitution = institutionService.findById(institutionId)
+                .orElseThrow(() -> new ResourceNotFoundException("Institution not found with id: " + institutionId));
+        }
         UserModel user = userService.findById(authorId).orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + authorId));
         CategoryModel category = categoryService.findById(categoryId).orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + categoryId));
-        OccurrenceModel occurrence = occurrenceService.createOccurrence(title, description, latitude, longitude, addressText, user, category);
+        OccurrenceModel occurrence = occurrenceService.createOccurrence(title, description, latitude, longitude, addressText, user, category, responsibleInstitution);
         OccurrenceDTO dto = OccurrenceMapper.toDTO(occurrence);
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }

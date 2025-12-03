@@ -17,4 +17,7 @@ public class InstitutionService {
     public List<InstitutionModel> findAll() {
         return institutionRepository.findAll();
     }
+    public Optional<InstitutionModel> findById(Long id) {
+        return institutionRepository.findById(id);
+    }
 }
