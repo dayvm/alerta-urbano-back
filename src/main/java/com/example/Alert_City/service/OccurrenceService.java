@@ -11,7 +11,9 @@ import com.example.Alert_City.enums.OccurrenceStatus;
 import com.example.Alert_City.model.CategoryModel;
 import com.example.Alert_City.model.OccurrenceModel;
 import com.example.Alert_City.model.UserModel;
+import com.example.Alert_City.model.InstitutionModel;
 import com.example.Alert_City.repository.OccurrenceRepository;
+
 
 @Service
 public class OccurrenceService {
