@@ -27,6 +27,10 @@ public class OccurrenceService {
         return occurrenceRepository.findByAuthorId(authorId);
     }
 
+    public List<OccurrenceModel> findByInstitutionId(Long institutionId) {
+        return occurrenceRepository.findByResponsibleInstitutionId(institutionId);
+    }
+
     public Optional<OccurrenceModel> findById(Long id) {
         return occurrenceRepository.findById(id);
     }

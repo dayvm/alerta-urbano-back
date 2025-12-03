@@ -10,4 +10,6 @@ import com.example.Alert_City.model.OccurrenceModel;
 @Repository
 public interface OccurrenceRepository extends JpaRepository<OccurrenceModel, Long> {
     List<OccurrenceModel> findByAuthorId(Long authorId);
+
+    List<OccurrenceModel> findByResponsibleInstitutionId(Long institutionId);
 }
