@@ -22,6 +22,7 @@ import com.example.Alert_City.exceptions.ResourceNotFoundException;
 import com.example.Alert_City.mapper.OccurrenceMapper;
 import com.example.Alert_City.model.CategoryModel;
 import com.example.Alert_City.model.OccurrenceModel;
+import com.example.Alert_City.model.InstitutionModel;
 import com.example.Alert_City.model.UserModel;
 import com.example.Alert_City.service.CategoryService;
 import com.example.Alert_City.service.OccurrenceService;
