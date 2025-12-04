@@ -56,4 +56,8 @@ public class OccurrenceService {
         occurrence.setCurrentStatus(newStatus);
         return occurrenceRepository.save(occurrence);
     }
+
+    public void deleteOccurrence(OccurrenceModel occurrence) {
+        occurrenceRepository.delete(occurrence);
+    }
 }
